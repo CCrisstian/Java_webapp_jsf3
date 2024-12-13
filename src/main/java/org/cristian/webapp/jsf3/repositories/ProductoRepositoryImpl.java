@@ -8,7 +8,7 @@ import org.cristian.webapp.jsf3.entities.Producto;
 import java.util.List;
 
 @RequestScoped
-public class ProductoRepositoryImpl implements CrudRepository<Producto>{
+public class ProductoRepositoryImpl implements CrudRepository<Producto> {
 
     @Inject
     private EntityManager em;
@@ -19,7 +19,22 @@ public class ProductoRepositoryImpl implements CrudRepository<Producto>{
     }
 
     @Override
+    public void guardar(Producto producto) {
+        if (producto.getId() != null && producto.getId() > 0) {
+            em.merge(producto);
+        } else {
+            em.persist(producto);
+        }
+    }
+
+    @Override
     public Producto porId(Long id) {
         return em.find(Producto.class, id);
+    }
+
+    @Override
+    public void eliminar(Long id) {
+        Producto producto = porId(id);
+        em.remove(producto);
     }
 }
